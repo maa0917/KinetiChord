@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Resonance // 感情が織りなすリアルタイム・デジタルアート</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- face-api.js (顔認識・表情分析ライブラリ) -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 全画面のデジタルアート・キャンバス -->
+    <canvas id="art-canvas"></canvas>
+
+    <!-- 背景オーロラ（ベースレイヤー） -->
+    <div class="aurora-bg">
+        <div class="blob blob-1" id="aurora-1"></div>
+        <div class="blob blob-2" id="aurora-2"></div>
+    </div>
+
+    <!-- メインUIレイヤー -->
+    <div class="app-container">
+        <!-- ヘッダー -->
+        <header class="glass-header">
+            <div class="logo">
+                <i data-lucide="sparkles" class="logo-icon animate-pulse"></i>
+                <span>Emotional Resonance</span>
+                <span class="badge">EMOTIVE ART</span>
+            </div>
+            <div class="header-status" id="system-status">
+                <span class="status-dot orange"></span>
+                <span id="status-text">システム初期化中...</span>
+            </div>
+        </header>
+
+        <!-- アート説明 ＆ 開始オーバーレイ -->
+        <div id="start-overlay" class="start-container">
+            <button id="btn-enter" class="btn-primary launch-button">
+                <i data-lucide="sparkles"></i>
+                <span>アート空間を起動する</span>
+            </button>
+        </div>
+
+        <!-- インタラクティブUI（起動後にフェードイン） -->
+        <main class="main-content hidden" id="main-ui">
+            <!-- 左側: カメラプレビュー ＆ 感情パラメーター -->
+            <section class="side-panel">
+                <div class="glass-card camera-card">
+                    <div class="card-glow"></div>
+                    <div class="video-container">
+                        <video id="webcam" autoplay muted playsinline></video>
+                        <div class="video-overlay" id="video-mask"></div>
+                    </div>
+                    <div class="camera-controls">
+                        <span><i data-lucide="eye"></i> CAMERA FEED</span>
+                        <button id="btn-toggle-camera" class="btn-toggle active" title="カメラフィード切り替え">
+                            <i data-lucide="video"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-card emotion-metrics-card">
+                    <div class="metrics-title">
+                        <i data-lucide="bar-chart-3"></i>
+                        <span>EMOTION METRICS</span>
+                    </div>
+                    <div class="emotion-bar-group">
+                        <div class="bar-label"><span>😊 喜び (Happy)</span><span id="val-happy">0%</span></div>
+                        <div class="bar-track"><div class="bar-fill happy" id="fill-happy" style="width: 0%"></div></div>
+                    </div>
+                    <div class="emotion-bar-group">
+                        <div class="bar-label"><span>😢 哀しみ (Sad)</span><span id="val-sad">0%</span></div>
+                        <div class="bar-track"><div class="bar-fill sad" id="fill-sad" style="width: 0%"></div></div>
+                    </div>
+                    <div class="emotion-bar-group">
+                        <div class="bar-label"><span>😡 怒り (Angry)</span><span id="val-angry">0%</span></div>
+                        <div class="bar-track"><div class="bar-fill angry" id="fill-angry" style="width: 0%"></div></div>
+                    </div>
+                    <div class="emotion-bar-group">
+                        <div class="bar-label"><span>😮 驚き (Surprised)</span><span id="val-surprised">0%</span></div>
+                        <div class="bar-track"><div class="bar-fill surprised" id="fill-surprised" style="width: 0%"></div></div>
+                    </div>
+                    <div class="emotion-bar-group">
+                        <div class="bar-label"><span>😐 平穏 (Neutral)</span><span id="val-neutral">0%</span></div>
+                        <div class="bar-track"><div class="bar-fill neutral" id="fill-neutral" style="width: 0%"></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右側: アートコントロール ＆ インフォ -->
+            <section class="control-panel">
+                <div class="glass-card info-card">
+                    <h3>音と光の共鳴ロジック</h3>
+                    <p class="art-desc" id="art-status-desc">
+                        あなたの表情を捉えるのを待っています。カメラに顔を向けてみてください。
+                    </p>
+                    <div class="sound-visualizer-container">
+                        <div class="audio-waves" id="audio-wave-bars">
+                            <!-- JSで波形バーを動的に追加 -->
+                        </div>
+                    </div>
+                    <div class="mixer-group">
+                        <label><i data-lucide="mic"></i> マイク入力感度</label>
+                        <input type="range" id="mic-sensitivity" min="1" max="10" value="5">
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- フッター -->
+        <footer class="glass-footer">
+            <p>Emotional Resonance &copy; 2026 // Powered by Google Cloud Run & Antigravity</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
