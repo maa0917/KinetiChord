@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinetiChord // Presentation Slides</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* === 1. リセット ＆ 変数定義 === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-dark: #07030c;
+            --bg-card: rgba(22, 11, 38, 0.45);
+            --border-glow: rgba(147, 51, 234, 0.3);
+            --text-main: #e5defa;
+            --text-muted: #9f8fb3;
+            --neon-pink: #ff2a85;
+            --neon-cyan: #00f0ff;
+            --neon-gold: #ffd700;
+            --neon-blue: #3498db;
+            --neon-red: #ff3333;
+            --neon-green: #00ffaa;
+            --font-outfit: 'Outfit', 'Noto Sans JP', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-outfit);
+            background-color: #11091c;
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* === 2. スライド共通レイアウト (1920x1080ピクセル完全固定でPDFズレを根絶) === */
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            padding: 80px 100px 60px 100px;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #150a24 0%, #06020a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* 背景にうっすらと浮かぶネオンオーブ */
+        .slide::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, rgba(0,0,0,0) 70%);
+            top: -100px;
+            right: -100px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, rgba(0,0,0,0) 70%);
+            bottom: -100px;
+            left: -100px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* === 3. スライドパーツ群 === */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(159, 143, 179, 0.15);
+            padding-bottom: 25px;
+            margin-bottom: 45px;
+            z-index: 10;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff 0%, #d8b4fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-logo i {
+            color: var(--neon-pink);
+            filter: drop-shadow(0 0 8px var(--neon-pink));
+        }
+
+        .header-tag {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            letter-spacing: 3px;
+            background: rgba(0, 240, 255, 0.05);
+            text-transform: uppercase;
+        }
+
+        .slide-title-container {
+            margin-bottom: 30px;
+            z-index: 10;
+        }
+
+        .slide-title {
+            font-size: 54px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 30%, #e9d5ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .slide-title i {
+            color: var(--neon-cyan);
+            font-size: 48px;
+            filter: drop-shadow(0 0 6px var(--neon-cyan));
+        }
+
+        .slide-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(159, 143, 179, 0.1);
+            padding-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 400;
+            z-index: 10;
+        }
+
+        .footer-page {
+            background: rgba(147, 51, 234, 0.1);
+            color: var(--text-main);
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+        }
+
+        /* === 4. コンテンツレイアウト・グリッド === */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+            z-index: 10;
+            flex-grow: 1;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+            z-index: 10;
+            flex-grow: 1;
+        }
+
+        /* グラスモーフィズム・カード */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 35px;
+            position: relative;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1.5px;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.4) 0%, rgba(0, 240, 255, 0.1) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(159, 143, 179, 0.15);
+            padding-bottom: 12px;
+        }
+
+        .card-title i {
+            color: var(--neon-pink);
+        }
+
+        /* === 5. テキスト装飾、リスト、バッジ === */
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            position: relative;
+            padding-left: 30px;
+            color: var(--text-main);
+        }
+
+        li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--neon-cyan);
+            font-size: 16px;
+            top: 2px;
+            text-shadow: 0 0 6px var(--neon-cyan);
+        }
+
+        .highlight-text {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .neon-glow-pink { text-shadow: 0 0 10px var(--neon-pink); color: var(--neon-pink); }
+        .neon-glow-cyan { text-shadow: 0 0 10px var(--neon-cyan); color: var(--neon-cyan); }
+        .neon-glow-gold { text-shadow: 0 0 10px var(--neon-gold); color: var(--neon-gold); }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid currentColor;
+        }
+        .badge.happy { color: var(--neon-gold); background: rgba(255, 215, 0, 0.08); }
+        .badge.sad { color: var(--neon-blue); background: rgba(52, 152, 219, 0.08); }
+        .badge.angry { color: var(--neon-red); background: rgba(231, 76, 60, 0.08); }
+        .badge.surprised { color: var(--neon-cyan); background: rgba(0, 255, 220, 0.08); }
+        .badge.neutral { color: var(--neon-green); background: rgba(0, 255, 170, 0.08); }
+
+        /* テーブルスタイル */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        th {
+            background: rgba(147, 51, 234, 0.15);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: left;
+            padding: 12px 18px;
+            border-bottom: 2px solid rgba(147, 51, 234, 0.3);
+        }
+
+        td {
+            padding: 12px 18px;
+            font-size: 15px;
+            border-bottom: 1px solid rgba(159, 143, 179, 0.1);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* === 6. 特定ページ向けレイアウト === */
+        /* 表紙 (Slide 1) */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, #1a0833 0%, #030107 100%);
+        }
+
+        .title-slide::before {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 42, 133, 0.08) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .title-glow-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .title-project-name {
+            font-size: 104px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #ffbee6 50%, #b3efff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 25px rgba(255, 42, 133, 0.3));
+        }
+
+        .title-subtitle {
+            font-size: 32px;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 4px;
+            max-width: 1200px;
+            line-height: 1.4;
+            margin: 0 auto;
+        }
+
+        .title-divider {
+            width: 180px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+            margin: 45px auto;
+            border-radius: 2px;
+            box-shadow: 0 0 15px rgba(255, 42, 133, 0.8);
+        }
+
+        .title-meta {
+            font-size: 20px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-weight: 400;
+        }
+
+        .title-meta-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .title-meta-item i {
+            color: var(--neon-cyan);
+        }
+
+        /* ダイアグラム風接続図 */
+        .diagram-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .diagram-node {
+            width: 250px;
+            height: 160px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+            padding: 15px;
+            z-index: 5;
+        }
+
+        .diagram-node.active {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        .diagram-node i {
+            font-size: 36px;
+            color: var(--neon-pink);
+        }
+
+        .diagram-node.active i {
+            color: var(--neon-cyan);
+        }
+
+        .diagram-node span {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .diagram-node p {
+            font-size: 13px;
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        .diagram-arrow {
+            flex-grow: 1;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(147, 51, 234, 0.4), rgba(0, 240, 255, 0.8));
+            position: relative;
+            margin: 0 15px;
+        }
+
+        .diagram-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -5px;
+            width: 12px;
+            height: 12px;
+            border-top: 2px solid var(--neon-cyan);
+            border-right: 2px solid var(--neon-cyan);
+            transform: rotate(45deg);
+        }
+
+        .tech-badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(159, 143, 179, 0.2);
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-badge i {
+            color: var(--neon-pink);
+        }
+
+        /* === 7. 印刷用設定 (PDF出力) === */
+        @media print {
+            body {
+                background: #06020a !important;
+            }
+            .slide {
+                background: radial-gradient(circle at 50% 50%, #150a24 0%, #06020a 100%) !important;
+                border: none !important;
+                box-shadow: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+        }
+
+        @page {
+            size: 1920px 1080px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================
+         PAGE 1: TITLE SLIDE (表紙)
+         ========================================================== -->
+    <section class="slide title-slide">
+        <div class="title-glow-container">
+            <h1 class="title-project-name">KinetiChord</h1>
+            <p class="title-subtitle">身体と感情のダイナミズムが織りなす、極限の音響＆ビジュアル共鳴アート</p>
+        </div>
+        <div class="title-divider"></div>
+        <div class="title-meta">
+            <div class="title-meta-item">
+                <i data-lucide="user"></i>
+                <span>Developer: <strong>maa0917</strong></span>
+            </div>
+            <div class="title-meta-item">
+                <i data-lucide="cpu"></i>
+                <span>Engine: <strong>Google Antigravity // Gemini AI Hackathon 2026</strong></span>
+            </div>
+            <div class="title-meta-item" style="font-size: 16px; color: var(--text-muted); margin-top: 15px;">
+                <i data-lucide="link" style="width: 14px; height: 14px;"></i>
+                <span>synth-flow-1038264562195.us-central1.run.app</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 2: CONCEPT (開発背景とコンセプト)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">01. Background & Concept</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="lightbulb"></i>開発背景とコア・コンセプト</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="help-circle"></i>現代のデジタルアートの課題</h3>
+                <ul>
+                    <li><span class="highlight-text">「静観」から抜け出せない体験</span>: 多くのデジタル表現が画面の向こう側の鑑賞にとどまり、身体や感情の直感的なアウトプットと切り離されている。</li>
+                    <li><span class="highlight-text">双方向性の希薄さ</span>: 単にマウスをクリックする、決められたボタンを押すだけといった、単調で機械的なインタラクションの限界。</li>
+                    <li><span class="highlight-text">感情の未反映</span>: ユーザーのリアルタイムな「心のゆらぎ」がデジタル表現の挙動に結びついていない。</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="check-circle-2"></i>KinetiChordの解答</h3>
+                <p class="highlight-text" style="color: var(--neon-cyan); font-size: 20px; margin-bottom: 15px;">
+                    身体全体を「楽器」に、表情を「光」に変え、空間に自らの存在を共鳴させる。
+                </p>
+                <ul>
+                    <li><span class="highlight-text">極限のマルチモーダル融合</span>: ウェブカメラによる「表情分析 ＆ 身体モーション追跡」と「マイク音圧解析」を極限までブレンド。</li>
+                    <li><span class="highlight-text">「音と光をまとう」新体験</span>: 自身の身体の速度そのものが粒子エフェクトやシンセの和音をダイナミックに変化させる超感覚フィードバック。</li>
+                </ul>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 02</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 3: ARCHITECTURE (システム概要 ＆ インタラクション)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">02. System Architecture</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="activity"></i>入力から出力へのシームレスな共鳴ロジック</h2>
+        </div>
+        <div class="card" style="margin-bottom: 35px;">
+            <p style="text-align: center; font-size: 20px; color: #ffffff;" class="highlight-text">
+                ウェブカメラとマイクからの情報が、リアルタイムに3D描画エンジンと Web Audio 処理グラフへ分配・処理されます。
+            </p>
+            <div class="diagram-container">
+                <div class="diagram-node">
+                    <i data-lucide="smile"></i>
+                    <span>表情 ＆ 感情分析</span>
+                    <p>face-api.js (100ms)</p>
+                </div>
+                <div class="diagram-arrow"></div>
+                <div class="diagram-node active">
+                    <i data-lucide="cpu"></i>
+                    <span>KinetiChord Core</span>
+                    <p>3D Projection / Filter Mix</p>
+                </div>
+                <div class="diagram-arrow"></div>
+                <div class="diagram-node">
+                    <i data-lucide="music"></i>
+                    <span>Web Audio API</span>
+                    <p>WaveShaper / Panner / Delay</p>
+                </div>
+            </div>
+            <div class="diagram-container" style="margin-top: 25px;">
+                <div class="diagram-node" style="border-color: var(--neon-pink);">
+                    <i data-lucide="move" style="color: var(--neon-pink);"></i>
+                    <span>身体モーション追跡</span>
+                    <p>手の速度差分 ＆ 全身差分</p>
+                </div>
+                <div class="diagram-arrow" style="background: linear-gradient(90deg, rgba(255, 42, 133, 0.4), rgba(0, 240, 255, 0.8));"></div>
+                <div class="diagram-node active">
+                    <i data-lucide="sparkles"></i>
+                    <span>3D Canvas</span>
+                    <p>420 Particles / Skeleton</p>
+                </div>
+                <div class="diagram-arrow" style="background: linear-gradient(90deg, rgba(147, 51, 234, 0.4), rgba(0, 240, 255, 0.8));"></div>
+                <div class="diagram-node" style="border-color: var(--neon-gold);">
+                    <i data-lucide="headphones" style="color: var(--neon-gold);"></i>
+                    <span>3D立体定位音響</span>
+                    <p>手の座標 ➡️ ステレオ定位</p>
+                </div>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 03</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 4: CORE FUNCTION 1 (キネティック・スケルトン)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">03. Core Feature I</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="accessibility"></i>身体を完璧にトレースする「キネティック・スケルトン」</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-cyan);"><i data-lucide="eye"></i> 二律駆動 (Dual-Mode) アバター</h3>
+                <ul>
+                    <li><span class="highlight-text">リアルタイム・トラッキング</span>: 表情認識により得られた「顔の座標」と「手のモーション重心」をミリ秒単位で追従（Lerpによる滑らかな補間）。</li>
+                    <li><span class="highlight-text">自律ダンス・デフォルト回帰</span>: カメラからロスト、または非検出のときは、海藻や水中ダンサーのように優雅にたゆたう「自律ダンスポーズ」へ滑らかに移行。不自然な「直立不動」やフリーズを根絶。</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-pink);"><i data-lucide="axis-3d"></i> 3Dシリンダー投影・幾何数学</h3>
+                <ul>
+                    <li><span class="highlight-text">立体的な脚部ボリューム復元</span>: 股関節から足首に至るまでの骨格を「3Dテーパーシリンダー（肉厚な円柱）」として数理モデリング。</li>
+                    <li><span class="highlight-text">シネマティック回転カメラ</span>: 自転するアングル（左右）とたゆたうアングル（上下）をリアルタイムに計算し、3D空間上のアバター座標を2Dスクリーン座標へ完璧に射影。3D表現の真髄を引き出します。</li>
+                </ul>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 04</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 5: CORE FUNCTION 2 (ダイナミック・パーティクル)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">04. Core Feature II</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="zap"></i>動きに連動するダイナミック・パーティクル</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-cyan);"><i data-lucide="wand-2"></i> ① 手速度追跡 ＆ 物理軌跡バースト</h3>
+                <p>左右の手の位置のフレーム間差分を監視し、移動速度（`speed > 8.0`）を算出：</p>
+                <ul>
+                    <li><span class="highlight-text">軌跡バースト粒子</span>: 素早く手を振ると、手の進行ベクトルを継承した3〜8個の輝く軌跡粒子が鋭く射出。</li>
+                    <li><span class="highlight-text">直感的な爽快感</span>: 画面上で実際に光の球を手から「投げ飛ばす」ようなリアルな物理インタラクション。</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-pink);"><i data-lucide="rainbow"></i> ② 全身モーションスパーク ＆ 星座ライン</h3>
+                <ul>
+                    <li><span class="highlight-text">虹色スパーク (Sparks)</span>: ウェブカメラ全体の動きの激しさ（`activeMotionPoints.length`）が閾値（120）を超えると、骨格パーツから極めて寿命が短く瞬く「レインボーの火花」がポポポと吹き出します。</li>
+                    <li><span class="highlight-text">動的星座ライン脈動</span>: 全身の動きに連動し、星座の接続線（areAdjacentBodyParts）が太く明るく脈動。さらに、動きが激しいときは線の接続限界距離が自動拡張されます。</li>
+                </ul>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 05</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 6: CORE FUNCTION 3 (極限音響システム)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">05. Core Feature III</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="waves"></i>音を極限まで変化させる「Extreme Sound FX」</h2>
+        </div>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">対象の感情</th>
+                        <th style="width: 25%">ビジュアルエフェクト</th>
+                        <th style="width: 60%">極限音響モジュレーション (Extreme Sound FX)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge happy">😊 喜び (Happy)</span></td>
+                        <td>黄金（ゴールド）の気泡オーラが優雅に上昇。</td>
+                        <td><span class="highlight-text">アルペジエーター・スイープ</span>: ローパスを9,500Hzに完全解放。120ms周期でコード音がオクターブ上にステップし流れるようなきらめき音色。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge sad">😢 哀しみ (Sad)</span></td>
+                        <td>悲しみの涙粒子が下へポトポト滴り落ちる。</td>
+                        <td><span class="highlight-text">深海フェードアウト</span>: 音量最大85%カット。ローパスを150Hzの深海極限状態にし、ディレイ帰還率88%のエコーで哀愁がどこまでも溶けていく。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge angry">😡 怒り (Angry)</span></td>
+                        <td>真紅（レッド）の火花が激しい初速で四散。</td>
+                        <td><span class="highlight-text">爆音ディストーション</span>: クリーン音を完全0%に遮断。WaveShaperによる歪み量を極限（350）まで増幅、マイク音圧連動的爆音ゲインと悲鳴ピッチジッター。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge surprised">😮 驚き (Surprised)</span></td>
+                        <td>シアンの衝撃パルス粒子が全方位に大爆発。</td>
+                        <td><span class="highlight-text">15Hz高速ステレオ往復パン</span>: 音像が1秒間に15回左右に揺さぶられ、金属音が鳴り響く極小の0.05秒スラップバックエコーが襲うサイケデリック音響。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge neutral">😐 平穏 (Neutral)</span></td>
+                        <td>エメラルドグリーンの光の霧がたゆたう。</td>
+                        <td><span class="highlight-text">心地よい5声ドローン音</span>: 5つのシンセ（サイン波＆三角波）が、脳を心地よくリラックスさせるドローン持続音を優しく響かせます。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 06</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 7: TECH STACK (技術スタック ＆ 最適化)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">06. Tech Stack & Optimization</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="layers"></i>徹底したVanilla実装と超高速パフォーマンス最適化</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="code"></i>技術スタックの一覧</h3>
+                <div class="tech-badge-container">
+                    <span class="tech-badge"><i data-lucide="globe"></i>HTML5 / Canvas 2D</span>
+                    <span class="tech-badge"><i data-lucide="palette"></i>Vanilla CSS</span>
+                    <span class="tech-badge"><i data-lucide="coffee"></i>Vanilla JS (ES6+)</span>
+                    <span class="tech-badge"><i data-lucide="brain"></i>face-api.js (TensorFlow)</span>
+                    <span class="tech-badge"><i data-lucide="music-4"></i>Web Audio API</span>
+                    <span class="tech-badge"><i data-lucide="box"></i>Docker</span>
+                    <span class="tech-badge"><i data-lucide="cloud"></i>GCP Cloud Run</span>
+                </div>
+                <p style="margin-top: 25px;">
+                    重厚なUIフレームワーク（React等）を排し、ブラウザ機能に極限まで密着した<span class="highlight-text">「Pure Vanilla」で構築</span>。圧倒的なロード速度と描画レスポンスを実現。
+                </p>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="gauge"></i>60FPSを維持するためのチューニング</h3>
+                <ul>
+                    <li><span class="highlight-text">モーション検出の超軽量化</span>: 解析解像度を `48x36` ピクセルに縮小。パフォーマンス消費を事実上ゼロにクランプしつつ、手の重心を見事に捉えます。</li>
+                    <li><span class="highlight-text">非同期モデルロード</span>: TensorFlowの表情モデル（約5MB）はアプリ起動と同時に非同期読み込み。UIの操作を1秒も阻害しません。</li>
+                    <li><span class="highlight-text">厳格なパーティクル管理</span>: 最大描画数を `650` に制御。寿命を迎えた粒子を即時ガベージコレクション。</li>
+                </ul>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 07</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 8: DEPLOYMENT (動作検証 ＆ デプロイ構成)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">07. Deployment & Verification</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="server"></i>Docker ＆ Google Cloud Run への自動デプロイ構成</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="terminal"></i>デプロイの仕組み</h3>
+                <p>
+                    静的Webサーバー（Nginx）を含む超軽量な `Alpine-based Dockerfile` を定義し、GCP Cloud Runへ直結。
+                </p>
+                <ul>
+                    <li><span class="highlight-text">秒速のスケールアウト</span>: アクセス急増時もサーバーレスで自動スケーリング。常時起動（ミニマムインスタンス）設定により、コールドスタート時の遅延を根絶しています。</li>
+                    <li><span class="highlight-text">HTTPS常時強制</span>: カメラ・マイク（Webcam/WebAudio）のセキュリティポリシーに準拠するため、完全なセキュア通信を確保。</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><i data-lucide="check-square"></i>動作検証・デモ手順</h3>
+                <ul>
+                    <li><span class="highlight-text">Step 1</span>: 画面下の「Start / 宇宙の波動と調和する」をクリック。</li>
+                    <li><span class="highlight-text">Step 2 (マイク拍動)</span>: マイクに向かってポンと手を叩き、白銀の衝撃粒子が一斉に弾けるのを確認。</li>
+                    <li><span class="highlight-text">Step 3 (感情変化)</span>: 表情を切り替える（Happy ➡️ Angryなど）。全身の関節から対応する色彩粒子が大爆発するのを確認。</li>
+                    <li><span class="highlight-text">Step 4 (手スワイプ)</span>: 手を素早く動かし、手の移動ベクトルの慣性を持った物理弾が射出されるのを確認。</li>
+                </ul>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 08</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 9: FUTURE VISION (将来の展望 ＆ 拡張性)
+         ========================================================== -->
+    <section class="slide">
+        <header class="slide-header">
+            <div class="header-logo"><i data-lucide="sparkles"></i>KinetiChord</div>
+            <span class="header-tag">08. Future Vision</span>
+        </header>
+        <div class="slide-title-container">
+            <h2 class="slide-title"><i data-lucide="rocket"></i>KinetiChordが切り拓く将来の展望</h2>
+        </div>
+        <div class="grid-3">
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-cyan);"><i data-lucide="glasses"></i> 1. VR/AR・XR空間展開</h3>
+                <p>
+                    ウェブカメラの限界を超え、Apple Vision ProやMeta Questなどの3Dハンドトラッキングセンサーと統合。
+                </p>
+                <p class="highlight-text" style="font-size: 15px;">
+                    空間の全方位（360度）に手から数万個の音響粒子を射出し、文字通り「音と光を全身に纏い、演奏する」メタバース・アートへ。
+                </p>
+            </div>
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-pink);"><i data-lucide="sliders"></i> 2. 外部DAW連携 (MIDI)</h3>
+                <p>
+                    身体の動きの速度・感情値を、Web MIDI API経由でプロ仕様の音楽制作ソフト（Ableton Live, Logic Proなど）にリアルタイム送信。
+                </p>
+                <p class="highlight-text" style="font-size: 15px;">
+                    ダンサーの「ダンスの激しさ」がシンセサイザーのフィルターを直接モジュレートする、究極の身体表現シンセ。
+                </p>
+            </div>
+            <div class="card">
+                <h3 class="card-title" style="color: var(--neon-gold);"><i data-lucide="music-3"></i> 3. ライブステージ演出</h3>
+                <p>
+                    リアルタイム生成される美しい星座アバターとスパークを、高輝度プロジェクターでダンスステージへ直接プロジェクションマッピング。
+                </p>
+                <p class="highlight-text" style="font-size: 15px;">
+                    遅延わずか数ミリ秒で、演者の身体と劇的なリアルタイム視覚エフェクト・ライブ音響が完全共鳴する。
+                </p>
+            </div>
+        </div>
+        <footer class="slide-footer">
+            <span>Gemini AI Hackathon 2026 // Presentation Deck</span>
+            <span class="footer-page">Page 09</span>
+        </footer>
+    </section>
+
+    <!-- ==========================================================
+         PAGE 10: CONCLUSION (結び)
+         ========================================================== -->
+    <section class="slide title-slide" style="background: radial-gradient(circle at 50% 50%, #1e0935 0%, #030107 100%);">
+        <div class="title-glow-container">
+            <p class="title-subtitle" style="font-size: 40px; color: var(--neon-cyan); letter-spacing: 6px; font-weight: 800; margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);">
+                身体は楽器になり、感情は光となる。
+            </p>
+            <h1 class="title-project-name" style="font-size: 94px; background: linear-gradient(135deg, #ffffff 0%, #ffbee6 50%, #b3efff 100%); margin-bottom: 10px;">
+                Thank You.
+            </h1>
+            <p class="title-subtitle" style="font-size: 24px; letter-spacing: 2px;">ご清聴ありがとうございました。</p>
+        </div>
+        <div class="title-divider" style="width: 140px;"></div>
+        <div class="title-meta" style="font-size: 18px;">
+            <span>Project Repository: <strong style="color: #ffffff;">github.com/maa0917/KinetiChord</strong></span>
+            <span style="font-size: 14px; color: var(--text-muted); margin-top: 5px;">Created by maa0917 with Antigravity & Codex</span>
+        </div>
+    </section>
+
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+    </script>
+</body>
+</html>
