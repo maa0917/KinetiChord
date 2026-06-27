@@ -1,4 +1,4 @@
-// Emotional Resonance // 感情共鳴インタラクティブアート・エンジン
+// KinetiChord // 感情共鳴 ＆ 極限モーション・インタラクティブアート・エンジン
 
 // === 1. グローバル状態管理 ===
 let isSystemReady = false;
